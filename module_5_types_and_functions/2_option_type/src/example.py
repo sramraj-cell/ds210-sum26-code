@@ -8,7 +8,7 @@ def find_index(target, names):
 
 
 def main():
-    names = ["Kinan", "Matt", "Taishan", "Zach", "Kesar", "Lingie", "Emir"]
+    names = ["Kinan", "Matt", "Taishan", "Zach", "Kesar", "Lingjie", "Emir"]
     grades = [ 0,      100,    95,        88,     99,      98,       97]
 
     # Find Matt's grade: this works!

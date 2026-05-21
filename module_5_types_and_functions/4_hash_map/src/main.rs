@@ -8,7 +8,7 @@ fn main() {
         ("Taishan", 95),
         ("Zach", 88),
         ("Kesar", 99),
-        ("Lingie", 98),
+        ("Lingjie", 98),
         ("Emir", 97)
     ]);
 
