@@ -24,7 +24,7 @@ fn majority_element(v: Vec<i32>) -> i32 {
         }
     }
 
-    return -1;
+    unreachable!("there will always be a majority element");
 }
 
 fn main() {
