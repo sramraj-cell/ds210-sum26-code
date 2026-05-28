@@ -35,7 +35,7 @@ pub async fn create_webserver() -> Rocket<Build> {
     let rocket = rocket::build()
         .configure(rocket::Config::figment().merge(("port", 3000)))
         .mount("/", routes![endpoints::endpoint, endpoints::history])
-        .mount("/", FileServer::new("html", Options::Missing))
+        .mount("/", FileServer::new(rocket::fs::relative!("html"), Options::Index | Options::Missing))
         .mount("/", rocket_cors::catch_all_options_routes())
         .attach(cors.clone())
         .manage(cors)

@@ -4,7 +4,7 @@ mod helpers;
 
 fn majority_element(v: &Vec<i32>) -> &i32 {
     loop {
-        // println!("Guessing again");
+        // println!("Guessing");
         let random_number = helpers::random_element(v);
 
         let mut count_of_random_number = 0;
