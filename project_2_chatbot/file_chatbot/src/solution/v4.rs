@@ -17,24 +17,34 @@ impl ChatbotV4 {
         let filename = &format!("{}.txt", username);
 
         let mut chat_session: Chat<Llama> = self.model
-            .chat()
-            .with_system_prompt("The assistant will act like a pirate");
+        .chat()
+        .with_system_prompt("The assistant will act like a pirate");
 
-        if let Some(session) = file_library::load_chat_session_from_file(filename) {
-            chat_session = fixed_load_session(
-                self.model.chat().with_system_prompt("The assistant will act like a pirate"),
-                session
-            );
-        }
+        
+        let saved_session = file_library::load_chat_session_from_file(filename);
+        match saved_session {
+          Some(session) => {
+              chat_session = fixed_load_session(
+            self.model.chat().with_system_prompt("The assistant will act like a pirate"),
+                 session
+        );
+    }
+          None => {
+    }
+}
 
         let response = match chat_session.add_message(message).await {
             Ok(response) => response,
             Err(_) => String::from("Error generating response"),
         };
 
-        if let Ok(session) = chat_session.session() {
-            file_library::save_chat_session_to_file(filename, &session);
-        }
+        let session_result = chat_session.session();
+        match session_result {
+           Ok(session) => {
+              file_library::save_chat_session_to_file(filename, &session);
+    }
+        Err(_) => {}
+}
 
         return response;
 
