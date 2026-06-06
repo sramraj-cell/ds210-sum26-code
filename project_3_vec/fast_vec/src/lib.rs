@@ -77,27 +77,28 @@ impl<T> FastVec<T> {
     pub fn push(&mut self, t: T) {
         if self.len == self.capacity {
             let new_capacity = self.capacity * 2;
-            let new_ptr = unsafe { 
-                MALLOC.malloc(new_capacity * size_of::<T>()) as *mut T 
-            };
-                for i in 0..self.len() {
-                    unsafe {
-                        ptr::write(new_ptr.add(i), ptr::read(self.ptr_to_data.add(i)));
-                    }  
-            }
-            self.ptr_to_data = new_ptr;
-            self.capacity = new_capacity;
-        }
-        else {
+            let new_ptr = unsafe {
+                MALLOC.malloc(new_capacity * size_of::<T>()) as *mut T
+        };
             unsafe {
-                ptr::write(self.ptr_to_data.add(self.len), t);
-
+                for i in 0..self.len {
+                    ptr::write(new_ptr.add(i), ptr::read(self.ptr_to_data.add(i)));
             }
+                MALLOC.free(self.ptr_to_data as *mut u8);
         }
-         self.len += 1;
+        self.ptr_to_data = new_ptr;
+        self.capacity = new_capacity;
     }
+        unsafe {
+            ptr::write(self.ptr_to_data.add(self.len), t);
+    }
+        self.len += 1;
+}
 
     pub fn remove(&mut self, i: usize) -> T {
+        if i >= self.len {
+            panic!("FastVec: remove out of bounds");
+        }
         unsafe {
             let value = ptr::read(self.ptr_to_data.add(i));
 
@@ -113,10 +114,16 @@ impl<T> FastVec<T> {
     // Hint: check out case 2 in memory.rs, which you can run using
     //       cargo run --bin memory
     pub fn clear(&mut self) {
-        unsafe { MALLOC.free(self.ptr_to_data as *mut u8); }
+        unsafe {
+            for i in 0..self.len {
+                ptr::drop_in_place(self.ptr_to_data.add(i));
+            }
+            MALLOC.free(self.ptr_to_data as *mut u8)
+        }
         self.ptr_to_data = null_mut();
         self.len = 0;
-        self.capacity = 0;
+        self.capacity = 0
+       
     }
 }
 
