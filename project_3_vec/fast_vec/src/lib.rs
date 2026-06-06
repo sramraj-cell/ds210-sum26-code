@@ -61,19 +61,52 @@ impl<T> FastVec<T> {
 
     // Use the project handout as a guide for this part!
     pub fn get(&self, i: usize) -> &T {
-        todo!("implement get!");
+        if i >= self.len {
+            panic!("FastVec: get out of bounds");
+}
+        unsafe {
+            &*self.ptr_to_data.add(i) 
+
+        }
+        
+        
+
+    
     }
 
     pub fn push(&mut self, t: T) {
         if self.len == self.capacity {
-            todo!("implement growing the vector by doubling the size!");
-        } else {
-            todo!("implement pushing t directly since the vector still has capacity!");
+            let new_capacity = self.capacity * 2;
+            let new_ptr = unsafe { 
+                MALLOC.malloc(new_capacity * size_of::<T>()) as *mut T 
+            };
+                for i in 0..self.len() {
+                    unsafe {
+                        ptr::write(new_ptr.add(i), ptr::read(self.ptr_to_data.add(i)));
+                    }  
+            }
+            self.ptr_to_data = new_ptr;
+            self.capacity = new_capacity;
         }
+        else {
+            unsafe {
+                ptr::write(self.ptr_to_data.add(self.len), t);
+
+            }
+        }
+         self.len += 1;
     }
 
-    pub fn remove(&mut self, i: usize) {
-        todo!("implement remove");
+    pub fn remove(&mut self, i: usize) -> T {
+        unsafe {
+            let value = ptr::read(self.ptr_to_data.add(i));
+
+            for current_slot in i..self.len-1 {
+                ptr::write(self.ptr_to_data.add(current_slot), ptr::read(self.ptr_to_data.add(current_slot+1)));
+            }
+            self.len = self.len - 1;
+            return value
+        }
     }
 
     // This appears correct but with further testing, you will notice it has a bug!
