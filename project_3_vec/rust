@@ -1,0 +1,3 @@
+fn multiply_by_two(x: i32) -> String {
+    return x*2
+}
