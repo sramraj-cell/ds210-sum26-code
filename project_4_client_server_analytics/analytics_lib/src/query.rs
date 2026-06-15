@@ -1,11 +1,15 @@
 use crate::dataset::Value;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize, Debug)]
 pub enum Condition {
     Equal(String, Value),
     Not(Box<Condition>),
     And(Box<Condition>, Box<Condition>),
     Or(Box<Condition>, Box<Condition>),
 }
+
+#[derive(Serialize, Deserialize, Debug)]
 
 pub enum Aggregation {
     Count(String),
@@ -21,6 +25,8 @@ impl Aggregation {
         }
     }
 }
+
+#[derive(Serialize, Deserialize, Debug)]
 
 pub struct Query {
     filter: Condition,
