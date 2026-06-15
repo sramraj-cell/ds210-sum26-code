@@ -1,0 +1,18 @@
+[package]
+name = "borrowing_rules"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "inactive_reference"
+path = "src/1_inactive_reference.rs"
+
+[[bin]]
+name = "many_const_references"
+path = "src/2_many_const_references.rs"
+
+[[bin]]
+name = "drop_while_borrowed"
+path = "src/3_drop_while_borrowed.rs"

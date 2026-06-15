@@ -1,0 +1,26 @@
+[package]
+name = "permissions"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[[bin]]
+name = "read_write_own"
+path = "src/1_read_write_own.rs"
+
+[[bin]]
+name = "missing_write"
+path = "src/2_missing_write.rs"
+
+[[bin]]
+name = "const_borrow"
+path = "src/3_const_borrow.rs"
+
+[[bin]]
+name = "mut_borrow"
+path = "src/4_mut_borrow.rs"
+
+[[bin]]
+name = "borrow_of_mut_data"
+path = "src/5_borrow_of_mut_data.rs"

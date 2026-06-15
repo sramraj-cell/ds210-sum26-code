@@ -1,0 +1,32 @@
+[package]
+name = "vec_of_strings"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libc = "0.2"
+tracker = { path = "../../project_3_vec/tracker" }
+
+[[bin]]
+name = "dangling_pointer"
+path = "src/1_dangling_pointer.rs"
+
+[[bin]]
+name = "put_on_heap"
+path = "src/2_put_on_heap.rs"
+
+[[bin]]
+name = "memory_leak"
+path = "src/3_memory_leak.rs"
+
+[[bin]]
+name = "manual_cleanup"
+path = "src/4_manual_cleanup.rs"
+
+[[bin]]
+name = "use_after_free"
+path = "src/5_use_after_free.rs"
+
+[[bin]]
+name = "boxes"
+path = "src/6_boxes.rs"
