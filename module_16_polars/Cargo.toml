@@ -1,0 +1,19 @@
+[package]
+name = "module_15_polars"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "eager"
+path = "src/eager.rs"
+
+[[bin]]
+name = "eager_optimized"
+path = "src/eager_optimized.rs"
+
+[[bin]]
+name = "lazy"
+path = "src/lazy.rs"
+
+[dependencies]
+polars = { version = "0.53.0", features = ["polars-lazy", "lazy", "polars-io", "polars-ops", "polars-expr", "polars-plan", "list_filter"] }
