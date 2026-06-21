@@ -1,15 +1,99 @@
+//use tic_tac_toe_stencil::Outcome::O;
 use tic_tac_toe_stencil::agents::Agent;
-use tic_tac_toe_stencil::board::Board;
+use tic_tac_toe_stencil::board::{Board, Cell};
 use tic_tac_toe_stencil::player::Player;
 
 // Your solution solution.
 
 const MAX_DEPTH: u64 = 4; 
+// looks at a group of exactly 3 cells and scores based on how promising it is.
+// positive = good for X, Negative = good for O
+fn evaluate_window(window: &[&Cell; 3]) -> i32{
+    // count how many of each type are in the 3 cells
+    let x_count     = window.iter().filter(|&&c| c == &Cell::X).count();
+    let o_count     = window.iter().filter(|&&c| c == &Cell::O).count();
+    let empty_count = window.iter().filter(|&&c| c == &Cell::Empty).count();
 
-//heuristic function
-fn heuristic(board: &Board) -> i32 {
-    board.score()
+    //if both players have a piece in the 3 cells its worthless
+    if x_count > 0 && o_count > 0 {
+        return 0;
+    }
+    // X has 2 in a row with 1 empty space, 1 move away from completing 3 in a row, 10 points
+    if x_count == 2 && o_count == 1 {
+        return 10;
+    }
+    // X has 1 piece and 2 empty spaces, small potential, 2 points
+    if x_count == 1 && empty_count == 2 {
+        return 2;
+    }
+    // O has 2 in a row with 1 empty space, big threat to X, -10 points
+    if o_count == 2 && empty_count ==1 {
+        return -10;
+    }
+    // O has 1 piece with 2 empty spaces, small threat to X , - 2 points
+    if o_count == 1 && empty_count == 2 {
+        return - 2;
+    }
+    0 // window is completely empty or all walls
 }
+//smart heuristic function
+fn heuristic(board: &Board) -> i32 {
+    let cells = board.get_cells(); //get the 2d grid of cells
+    let size = cells.len(); // how wide the board is, 3 for 3*3 , 5 for 5*5
+    let mut score: i32 = 0;  // running total of the score
+
+    score = score + board.score() * 100; // reward already completed 3 in a rows heavily, so they always outweigh smaller bonus scores.
+
+    // scan every posibility for a 3 in a row/ column/ diagonal starting from that cell
+    for i in 0..size {
+        for j in 0..size {
+
+            // horizontal window. 
+            if j + 2 < size { // j+2 must be inside the board 
+                let window = [&cells[i][j], &cells[i][j+1], &cells[i][j+2]];
+                score = score + evaluate_window(&window);
+            }
+            // vertical window
+            if i + 2 < size {
+                let window = [&cells[i][j], &cells[i+1][j], &cells[i+2][j]];
+                score = score + evaluate_window(&window);
+            }
+            // Diagonal window going down right
+            if i + 2 < size && j +2 < size {
+                let window = [&cells[i][j], &cells[i+1][j+1], &cells[i+2][j+2]];
+                score = score + evaluate_window(&window);
+            }
+            // Diagonal window going down left
+            if i + 2 < size && j >= 2 { //j >= 2 so that j-2 does not go negative
+                let window = [&cells[i][j], &cells[i+1][j-1], &cells[i+2][j-2]];
+                score = score + evaluate_window(&window);
+
+            }
+        }
+    }
+
+
+// reward control of the center
+    let center = size / 2; // middle index of the board, 1 for 3*3 and 2 for 5*5
+    for i in 0..size {
+        for j in 0..size {
+            // calculate the distance from the center
+            let distance_from_center = (i as i32 - center as i32).abs() + (j as i32 -center as i32).abs();
+            let center_bonus = (size as i32) - distance_from_center; // the closer to the center the higher the bonus and vice versa
+
+            match &cells[i][j] {
+                Cell::X => score = score + center_bonus,
+                Cell::O => score = score - center_bonus,
+                _=> {} //ignore if empty or wall.
+        }
+    }
+   
+}
+ score // returns the final estimated score for the board position
+}
+
+
+
 
 pub struct SolutionAgent {}
 // Put your solution here.111111
@@ -82,7 +166,7 @@ impl Agent for SolutionAgent {
     fn solve( board: &mut Board, player: Player, _time_limit: u64, ) -> (i32, usize, usize) {
         let emptycells = board.moves().len(); // count how many empty squares available to play in, i.e 3*3 or 5*5
 
-        let max_depth;
+        let max_depth;  // initialize a variable max_depth 
         if emptycells <=9 {
             max_depth = u64::MAX; // if it is 3*3 or less, recurse as deep as possible
         } else {
