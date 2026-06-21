@@ -169,6 +169,8 @@ impl Agent for SolutionAgent {
         let max_depth;  // initialize a variable max_depth 
         if emptycells <=9 {
             max_depth = u64::MAX; // if it is 3*3 or less, recurse as deep as possible
+        } else if emptycells >= 20 {
+            max_depth = 2;  // early game on an open 5*5 - too many moves to go deep, it will take too long
         } else {
             max_depth = 4; // if it is larger than 3*3 think recurse and think 4 moves ahead
         }
