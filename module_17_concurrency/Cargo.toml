@@ -1,0 +1,23 @@
+[package]
+name = "module_16_concurrency"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "1-basic"
+path = "src/1-basic.rs"
+
+[[bin]]
+name = "2-passing_data"
+path = "src/2-passing_data.rs"
+
+[[bin]]
+name = "3-passing_data2"
+path = "src/3-passing_data2.rs"
+
+[[bin]]
+name = "4-mutex"
+path = "src/4-mutex.rs"
+
+[dependencies]
+rand = "0.10.1"
