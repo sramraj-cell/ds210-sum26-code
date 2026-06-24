@@ -1,0 +1,41 @@
+use std::env;
+use std::time::Instant;
+use polars::prelude::*;
+
+fn main() {
+    let timer = Instant::now();
+
+    // Read dataset filename from the command line arguments.
+    let args: Vec<String> = env::args().collect();
+    let filename = &args[1];
+
+    // Set up a reader object to read the csv file (but do not read yet).
+    let reader = 
+        CsvReadOptions::default()
+            .with_has_header(true)
+            .try_into_reader_with_file_path(Some(filename.into()))
+            .unwrap();
+
+    // Read the entirety of the file into the `data` variable.
+    let data = reader.finish().unwrap();
+    println!("{}", data);
+    println!("Number of rows in dataset {}", data.height());
+    println!("First row in dataset {:?}", data.get_row(0).unwrap());
+
+    // Filter by album == Ashen.
+    let condition =
+        data.column("album").unwrap().str().unwrap()
+        .equal("Ashen");
+    let filtered_data = data.filter(&condition).unwrap();
+
+    // Group by the band and album columns, then compute the average rating per group.
+    // Given the filter, can we do away with the group by and just compute the overall mean?
+    let groups =
+        filtered_data.group_by(["band"]).unwrap();
+    let result =
+        groups.select(["rating"]).mean().unwrap();
+
+    // Print result.
+    println!("{}", result);
+    println!("{:?}", timer.elapsed());
+}
